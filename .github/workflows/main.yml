@@ -1,0 +1,60 @@
+name: SuperKart MLOps Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  register-dataset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r SuperKart/requirements.txt
+
+      - name: Upload Dataset to Hugging Face Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python SuperKart/model_building/data_register.py
+
+
+  data-prep:
+    needs: register-dataset
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r SuperKart/requirements.txt
+
+      - name: Run Data Preparation
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python SuperKart/model_building/prep.py
+
+
+  model-training:
+    needs: data-prep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r SuperKart/requirements.txt
+
+      - name: Train Model
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python SuperKart/model_building/train.py
+
+
+  deploy-hosting:
+    needs: [register-dataset, data-prep, model-training]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: pip install -r SuperKart/requirements.txt
+
+      - name: Deploy to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python SuperKart/hosting/hosting.py
