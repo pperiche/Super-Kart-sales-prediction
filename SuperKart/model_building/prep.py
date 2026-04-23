@@ -63,19 +63,23 @@ train["Product_Store_Sales_Total"] = ytrain
 test = Xtest.copy()
 test["Product_Store_Sales_Total"] = ytest
 
+print(os.getcwd())
+os.chdir("/content/SuperKart/data/")
+
 # Creating a csv file from test and train data.
-Xtrain.to_csv("SuperKart/data/Xtrain.csv",index=False)
-Xtest.to_csv("SuperKart/data/Xtest.csv",index=False)
-ytrain.to_csv("SuperKart/data/ytrain.csv",index=False)
-ytest.to_csv("SuperKart/data/ytest.csv",index=False)
+Xtrain.to_csv("Xtrain.csv", index=False)
+Xtest.to_csv("Xtest.csv",index=False)
+ytrain.to_csv("ytrain.csv",index=False)
+ytest.to_csv("ytest.csv",index=False)
 
 print("csv files created")
+print(os.getcwd())
 
 files = [
-"SuperKart/data/Xtrain.csv",
-"SuperKart/data/Xtest.csv",
-"SuperKart/data/ytrain.csv",
-"SuperKart/data/ytest.csv"
+"Xtrain.csv",
+"Xtest.csv",
+"ytrain.csv",
+"ytest.csv"
 ]
 
 for file_path in files:

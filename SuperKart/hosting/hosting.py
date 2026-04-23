@@ -8,7 +8,7 @@ api = HfApi(token=os.getenv("HF_TOKEN"))
 # Upload Streamlit app folder to Hugging Face Space
 api.upload_folder(
     folder_path="SuperKart",   # root folder containing app.py, models, etc.
-    repo_id="PratzPrathibha/superkart-sales-prediction-app",  # <-- your HF Space repo
+    repo_id="PratzPrathibha/Super-kart-sales-prediction",  # <-- your HF Space repo
     repo_type="space",  # IMPORTANT: this must be 'space'
     path_in_repo="",  # upload to root
 )
