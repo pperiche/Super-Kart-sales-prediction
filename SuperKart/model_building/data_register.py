@@ -6,7 +6,7 @@ repo_id = "PratzPrathibha/Super-kart-sales-prediction"
 repo_type = "dataset"
 
 # Initialize API client
-api = HfApi(token=os.getenv("HF_TOKEN"))
+api = HfApi(token = os.getenv("HF_TOKEN"))
 
 # Step 1: Check if the dataset exists
 try:
@@ -17,8 +17,10 @@ except RepositoryNotFoundError:
     create_repo(repo_id=repo_id, repo_type=repo_type, private=False)
     print(f"Dataset '{repo_id}' created.")
 
+print("Login to huggingface sucess. Trying to upload the data folder to HF")
 api.upload_folder(
     folder_path="SuperKart/data",
     repo_id=repo_id,
     repo_type=repo_type,
 )
+print("Dataset uploaded successfully to Hugging Face Hub")

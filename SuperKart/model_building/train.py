@@ -22,14 +22,53 @@ import joblib
 # hugging face upload
 from huggingface_hub import HfApi
 
-# -----------------------------
-# Load data
-# -----------------------------
-Xtrain = pd.read_csv("SuperKart/data/Xtrain.csv")
-Xtest = pd.read_csv("SuperKart/data/Xtest.csv")
-ytrain = pd.read_csv("SuperKart/data/ytrain.csv").values.ravel()
-ytest = pd.read_csv("SuperKart/data/ytest.csv").values.ravel()
+# for hugging face space authentication to upload files
+from huggingface_hub import login, HfApi, create_repo, hf_hub_download
+from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 
+# -----------------------------
+# Load data from hugging face
+# -----------------------------
+
+api = HfApi()
+
+token = os.getenv("HF_TOKEN")
+
+Xtrain_file = hf_hub_download(
+    repo_id="PratzPrathibha/Super-kart-sales-prediction",
+    filename="Xtrain.csv",
+    repo_type="dataset",
+    token=token
+)
+
+Xtest_file = hf_hub_download(
+    repo_id="PratzPrathibha/Super-kart-sales-prediction",
+    filename="Xtest.csv",
+    repo_type="dataset",
+    token=token
+)
+ytrain_file = hf_hub_download(
+    repo_id="PratzPrathibha/Super-kart-sales-prediction",
+    filename="ytrain.csv",
+    repo_type="dataset",
+    token=token
+)
+
+ytest_file = hf_hub_download(
+    repo_id="PratzPrathibha/Super-kart-sales-prediction",
+    filename="ytest.csv",
+    repo_type="dataset",
+    token=token
+)
+
+Xtrain = pd.read_csv(Xtrain_file)
+Xtest = pd.read_csv(Xtest_file)
+ytrain = pd.read_csv(ytrain_file).squeeze()
+ytest = pd.read_csv(ytest_file).squeeze()
+
+print("Successfully read Xtrain, Xtest, ytrain, ytest cvs files from hugging face")
+
+print("shape of y_train is :", ytrain.shape)
 print("Data loaded successfully")
 
 # -----------------------------
@@ -44,6 +83,7 @@ gb_pipeline = Pipeline([
     ("model", GradientBoostingRegressor(random_state=42))
 ])
 
+print("Pipeline created successfully")
 # -----------------------------
 # Hyperparameter tuning
 # -----------------------------
@@ -74,6 +114,8 @@ rf_search = RandomizedSearchCV(
 
 rf_search.fit(Xtrain, ytrain)
 
+print("Fit randomise forest model with train data")
+
 print("Tuning Gradient Boosting...")
 gb_search = RandomizedSearchCV(
     gb_pipeline,
@@ -86,6 +128,7 @@ gb_search = RandomizedSearchCV(
 )
 
 gb_search.fit(Xtrain, ytrain)
+print("Fit gradient boost model with train data")
 
 # -----------------------------
 # Select best model
@@ -142,13 +185,20 @@ print(f"Model saved at {model_path}")
 # Upload model to Hugging Face
 # -----------------------------
 
+# Create Model Repository
+from huggingface_hub import create_repo
+
+repo_id = "PratzPrathibha/Super-kart-sales-prediction"
+create_repo(repo_id=repo_id, repo_type="model", exist_ok=True)
+
+# Upload the model to hugging face
 api = HfApi(token=os.getenv("HF_TOKEN"))
 
 api.upload_file(
     path_or_fileobj=model_path,
     path_in_repo=model_name + ".pkl",
     repo_id="PratzPrathibha/Super-kart-sales-prediction",
-    repo_type="dataset",
+    repo_type="model",
 )
 
 print("Model uploaded to Hugging Face")

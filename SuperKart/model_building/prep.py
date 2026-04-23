@@ -1,5 +1,6 @@
 # for data manipulation
 import pandas as pd
+import numpy as np
 import sklearn
 # for creating a folder
 import os
@@ -13,10 +14,11 @@ from huggingface_hub import HfApi
 api = HfApi(token=os.getenv("HF_TOKEN"))
 DATASET_PATH = "hf://datasets/PratzPrathibha/Super-kart-sales-prediction/SuperKart.csv"
 df = pd.read_csv(DATASET_PATH)
+
 print("Dataset loaded successfully.")
 
 # Drop the unique identifier
-df.drop(columns=['Product_Id', 'Store_Id', 'count'], inplace=True)
+df.drop(columns=['Product_Id', 'Store_Id'], inplace=True)
 
 # Fix dirty value
 df["Product_Sugar_Content"] = df["Product_Sugar_Content"].replace("reg","Regular")
@@ -47,6 +49,8 @@ target_col = 'Product_Store_Sales_Total'
 X = df.drop(columns=[target_col])
 y = df[target_col]
 
+print("Performing test_train split.")
+
 # Perform train-test split
 Xtrain, Xtest, ytrain, ytest = train_test_split(
     X, y, test_size=0.2, random_state=42
@@ -64,6 +68,8 @@ Xtrain.to_csv("SuperKart/data/Xtrain.csv",index=False)
 Xtest.to_csv("SuperKart/data/Xtest.csv",index=False)
 ytrain.to_csv("SuperKart/data/ytrain.csv",index=False)
 ytest.to_csv("SuperKart/data/ytest.csv",index=False)
+
+print("csv files created")
 
 files = [
 "SuperKart/data/Xtrain.csv",

@@ -13,4 +13,4 @@ api.upload_folder(
     path_in_repo="",  # upload to root
 )
 
-print("Deployment to Hugging Face Space completed successfully 🚀")
+print("Deployment to Hugging Face Space completed successfully")

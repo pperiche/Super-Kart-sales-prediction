@@ -34,7 +34,7 @@ sugar_content = st.selectbox("Sugar Content", ["Low Sugar", "Regular", "No Sugar
 store_year = st.number_input("Store Establishment Year", min_value=1980, max_value=2025)
 
 # -----------------------------
-# Preprocessing (IMPORTANT)
+# Preprocessing
 # -----------------------------
 
 def preprocess_input():
